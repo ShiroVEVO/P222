@@ -9,20 +9,17 @@ class Contact(BaseModel):
     last_name = CharField(max_length=30)
     email = CharField(max_length=40)
     phone = CharField(max_length=25)
-    status = SmallIntegerField()
-    updated_at = DateTimeField()
 
     class Meta:
         db_table = 'contacts'
 
 
-async def create_contact(first_name: str, last_name: str, email: str, phone: str, status: int):
+async def create_contact(first_name: str, last_name: str, email: str, phone: str):
     contact_object = Contact(
         first_name=first_name,
         last_name=last_name,
         email=email,
         phone=phone,
-        status=status
     )
     contact_object.save()
     return contact_object
@@ -38,3 +35,12 @@ def list_contacts(skip: int = 0, limit: int = 100):
 
 def delete_contact(id: int):
     return Contact.delete().where(Contact.id == id).execute()
+
+
+def update_category(id: int, new_lastname: str, new_email: str, new_phone: str):
+    contact = Contact.get(Contact.id == id)
+    contact.last_name = new_lastname
+    contact.email = new_email
+    contact.phone = new_phone
+    contact.save()
+    return contact

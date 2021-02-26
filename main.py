@@ -4,18 +4,27 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from routers import contact
 
-# from models.contact import *
-
 app = FastAPI(title='Contact.ly', description='APIs for contact Apis', version='0.1')
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+from fastapi.middleware.cors import CORSMiddleware
+
+origins = [
+    "http://localhost.tiangolo.com", "https://localhost.tiangolo.com",
+    "http://localhost", "http://localhost:8080",
+]
+app.add_middleware(
+    CORSMiddleware, allow_origins=origins,
+    allow_credentials=True, allow_methods=["*"], allow_headers=["*"],
+)
+
 
 class Contact(BaseModel):
-    contact_id:int
-    first_name:str
-    last_name:str
-    user_name:str
-    password:str
+    contact_id: int
+    first_name: str
+    last_name: str
+    user_name: str
+    password: str
 
     class Config:
         schema_extra = {
@@ -29,10 +38,10 @@ class Contact(BaseModel):
 
 
 class ContactOut(BaseModel):
-    contact_id:int
-    first_name:str
-    last_name:str
-    user_name:str
+    contact_id: int
+    first_name: str
+    last_name: str
+    user_name: str
 
 
 @app.get("/")

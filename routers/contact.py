@@ -4,7 +4,7 @@ import peewee
 from fastapi import APIRouter, HTTPException, Response, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from models.contact import create_contact, get_contact, list_contacts, delete_contact
+from models.contact import create_contact, get_contact, list_contacts, delete_contact, update_category
 from pydantic import BaseModel
 from pydantic.utils import GetterDict
 
@@ -12,7 +12,6 @@ router_contacts = APIRouter(
     prefix="/contacts",
     tags=["contacts"]
 )
-
 
 templates = Jinja2Templates(directory="templates")
 
@@ -26,10 +25,10 @@ class PeeweeGetterDict(GetterDict):
 
 
 class ContactModel(BaseModel):
-    id:int
-    first_name:str
-    last_name:str
-    email:str
+    id: int
+    first_name: str
+    last_name: str
+    email: str
 
     class Config:
         orm_mode = True
@@ -44,21 +43,15 @@ def get_contacts():
 
 @router_contacts.get("/view/{id}", response_model=ContactModel, summary="Returns a single contact")
 async def view(id: int):
-    """
-        To view all details related to a single contact
-
-        - **id**: The integer id of the contact you want to view details.
-    """
     contact = get_contact(id=id)
     if contact is None:
         raise HTTPException(status_code=404, detail="Contact not found")
-
     return contact
 
 
 @router_contacts.post("/", response_model=ContactModel, summary="Create a new contact")
-async def create(first_name: str, last_name: str, email: str, phone: str, status: int):
-    return await create_contact(first_name=first_name, last_name=last_name, email=email, phone=phone, status=status)
+async def create(first_name: str, last_name: str, email: str, phone: str):
+    return await create_contact(first_name=first_name, last_name=last_name, email=email, phone=phone)
 
 
 @router_contacts.delete(
@@ -84,3 +77,9 @@ async def view_html(request: Request, id: int):
         raise HTTPException(status_code=404, detail="Contact not found")
 
     return templates.TemplateResponse("view.html", {"request": request, "contact": contact})
+
+
+@router_contacts.put("/update/{id}", summary="Update an contact")
+async def update(id: int, new_lastname: str, new_email: str, new_phone: str):
+    return update_category(id, new_lastname, new_email, new_phone)
+# aaa

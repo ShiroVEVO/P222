@@ -1,8 +1,8 @@
 from peewee import *
 
 user = 'root'
-password = 'root'
-db_name = 'fastapi_contact'
+password = 'Onepiece345'
+db_name = 'P2'
 
 conn = MySQLDatabase(
     db_name, user=user,
